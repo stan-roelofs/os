@@ -1,5 +1,4 @@
 [bits 16]
-
 switch_to_protected_mode:
     cli
     lgdt [gdt_descriptor]

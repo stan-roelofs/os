@@ -32,6 +32,7 @@ disk_error:
 sectors_error:
     mov bx, SECTORS_ERROR
     call print
+    call print_nl
     jmp $
 
 DISK_ERROR:

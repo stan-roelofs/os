@@ -1,26 +1,34 @@
+C_SOURCES = $(wildcard kernel/*.c drivers/*.c)
+HEADERS = $(wildcard kernel/*.h drivers/*.h)
+
+# TODO: sources depend on header files
+
+OBJ = ${C_SOURCES:.c=.o}
+
 all: os-image.bin
 
 run: all
 	qemu-system-x86_64 os-image.bin
 
-os-image.bin: boot.bin kernel.bin
+os-image.bin: boot/boot.bin kernel.bin
 	cat $^ > os-image.bin
+	dd if=/dev/zero count=1 >> os-image.bin
 
-kernel.bin : kernel_entry.o kernel.o
-	ld -T script.ld -m elf_i386 -o kernel.bin $^ --oformat binary
-	dd if=/dev/zero count=1 >> kernel.bin
+kernel.bin : kernel/kernel_entry.o ${OBJ}
+	ld -T script.ld -m elf_i386 -o $@ $^ --oformat binary
 
-kernel.o : kernel.c
-	gcc -m32 -fno-PIC -ffreestanding -c $< -o $@
+%.o : %.c
+	gcc -m32 -fno-PIC --freestanding -c $< -o $@
 
-kernel_entry.o : kernel_entry.asm
+%.o : %.asm
 	nasm $< -f elf -o $@
 
-boot.bin: boot.asm
-	nasm $< -f bin -o $@
+%.bin : %.asm
+	nasm $< -f bin -I boot/ -o $@
 
 clean:
-	rm -fr *.bin *.dis *.o *.map
+	rm -fr *.bin *.dis *.o *.map *.tmp *.temp
+	rm -fr kernel/*.o boot/*.bin drivers/*.o
 
 kernel.dis: kernel.bin
 	ndisasm -b 32 $< > $@

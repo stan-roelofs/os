@@ -1,1 +1,1 @@
-# mos
+# Simple toy OS :)

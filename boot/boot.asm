@@ -22,8 +22,8 @@ jmp $ ; Jump to start of this line, i.e. loop forever
 
 %include "boot_disk.asm"
 %include "print.asm"
-%include "print_protected_mode.asm"
 %include "gdt.asm"
+%include "print_protected_mode.asm"
 %include "switch_to_protected_mode.asm"
 
 [bits 16]
@@ -33,7 +33,7 @@ load_kernel:
     call print_nl
 
     mov bx, KERNEL_OFFSET
-    mov dh, 2
+    mov dh, 0xF
     mov dl, [BOOT_DRIVE]
     call disk_load
     ret

@@ -19,7 +19,7 @@ unsigned char port_word_in(unsigned short port)
     return result;
 }
 
-unsigned char port_wordout(unsigned short port, unsigned short data)
+unsigned char port_word_out(unsigned short port, unsigned short data)
 {
     __asm__("out %%al, %%dx" : : "a" (data), "d" (port));
 }
